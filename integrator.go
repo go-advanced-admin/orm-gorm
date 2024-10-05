@@ -7,14 +7,20 @@ import (
 	"strings"
 )
 
+// Integrator implements the ORMIntegrator interface using GORM.
+// It provides methods to interact with the database using GORM for the admin panel.
 type Integrator struct {
+	// DB is the GORM database connection used by the integrator.
 	DB *gorm.DB
 }
 
+// NewIntegrator creates a new Integrator with the provided GORM database connection.
 func NewIntegrator(db *gorm.DB) *Integrator {
 	return &Integrator{DB: db}
 }
 
+// GetPrimaryKeyValue retrieves the primary key value from the given model instance.
+// It returns an error if the primary key field cannot be found or accessed.
 func (i *Integrator) GetPrimaryKeyValue(model interface{}) (interface{}, error) {
 	modelValue := reflect.ValueOf(model)
 
@@ -48,6 +54,8 @@ func (i *Integrator) GetPrimaryKeyValue(model interface{}) (interface{}, error) 
 	return primaryKeyValue.Interface(), nil
 }
 
+// GetPrimaryKeyType retrieves the reflect.Type of the primary key field for the given model.
+// It returns an error if the primary key field cannot be found.
 func (i *Integrator) GetPrimaryKeyType(model interface{}) (reflect.Type, error) {
 	modelValue := reflect.ValueOf(model)
 
@@ -82,6 +90,8 @@ func (i *Integrator) GetPrimaryKeyType(model interface{}) (reflect.Type, error) 
 	return primaryKeyField.Type, nil
 }
 
+// FetchInstances retrieves all instances of the given model from the database.
+// It returns a slice of model instances or an error if the operation fails.
 func (i *Integrator) FetchInstances(model interface{}) (interface{}, error) {
 	modelType := reflect.TypeOf(model).Elem()
 	sliceType := reflect.SliceOf(modelType)
@@ -95,6 +105,9 @@ func (i *Integrator) FetchInstances(model interface{}) (interface{}, error) {
 	return instances, nil
 }
 
+// FetchInstancesOnlyFields retrieves all instances of the given model from the database,
+// selecting only the specified fields.
+// It returns a slice of model instances or an error if the operation fails.
 func (i *Integrator) FetchInstancesOnlyFields(model interface{}, fields []string) (interface{}, error) {
 	modelType := reflect.TypeOf(model).Elem()
 	sliceType := reflect.SliceOf(modelType)
@@ -120,6 +133,9 @@ func (i *Integrator) FetchInstancesOnlyFields(model interface{}, fields []string
 	return instances, nil
 }
 
+// FetchInstancesOnlyFieldWithSearch retrieves instances of the given model from the database,
+// selecting only the specified fields and filtering by a search query on specified search fields.
+// It returns a slice of model instances or an error if the operation fails.
 func (i *Integrator) FetchInstancesOnlyFieldWithSearch(model interface{}, fields []string, query string, searchFields []string) (interface{}, error) {
 	modelType := reflect.TypeOf(model).Elem()
 	sliceType := reflect.SliceOf(modelType)
@@ -158,6 +174,8 @@ func (i *Integrator) FetchInstancesOnlyFieldWithSearch(model interface{}, fields
 	return instances, nil
 }
 
+// DeleteInstance deletes an instance of the given model from the database, identified by the primary key value.
+// It returns an error if the deletion fails.
 func (i *Integrator) DeleteInstance(model interface{}, instanceID interface{}) error {
 	modelType := reflect.TypeOf(model).Elem()
 
@@ -190,6 +208,9 @@ func (i *Integrator) DeleteInstance(model interface{}, instanceID interface{}) e
 	return nil
 }
 
+// FetchInstanceOnlyFields retrieves a single instance of the model from the database, identified by the primary key value,
+// selecting only the specified fields.
+// It returns the instance or an error if the operation fails.
 func (i *Integrator) FetchInstanceOnlyFields(model interface{}, id interface{}, fields []string) (interface{}, error) {
 	modelType := reflect.TypeOf(model).Elem()
 	instance := reflect.New(modelType).Interface()
@@ -225,6 +246,8 @@ func (i *Integrator) FetchInstanceOnlyFields(model interface{}, id interface{}, 
 	return instance, nil
 }
 
+// FetchInstance retrieves a single instance of the model from the database, identified by the primary key value.
+// It returns the instance or an error if the operation fails.
 func (i *Integrator) FetchInstance(model interface{}, instanceID interface{}) (interface{}, error) {
 	modelType := reflect.TypeOf(model).Elem()
 	instance := reflect.New(modelType).Interface()
@@ -249,10 +272,14 @@ func (i *Integrator) FetchInstance(model interface{}, instanceID interface{}) (i
 	return instance, nil
 }
 
+// CreateInstance creates a new instance of the model in the database.
+// It returns an error if the operation fails.
 func (i *Integrator) CreateInstance(instance interface{}) error {
 	return i.DB.Create(instance).Error
 }
 
+// UpdateInstance updates an existing instance of the model in the database, identified by the primary key value.
+// It returns an error if the operation fails.
 func (i *Integrator) UpdateInstance(instance interface{}, primaryKey interface{}) error {
 	modelType := reflect.TypeOf(instance).Elem()
 
@@ -271,6 +298,8 @@ func (i *Integrator) UpdateInstance(instance interface{}, primaryKey interface{}
 	return i.DB.Model(instance).Where(fmt.Sprintf("%s = ?", primaryKeyDBName), primaryKey).Save(instance).Error
 }
 
+// CreateInstanceOnlyFields creates a new instance of the model in the database, including only the specified fields.
+// It returns an error if the operation fails.
 func (i *Integrator) CreateInstanceOnlyFields(instance interface{}, fields []string) error {
 	if len(fields) == 0 {
 		return i.DB.Create(instance).Error
@@ -279,6 +308,9 @@ func (i *Integrator) CreateInstanceOnlyFields(instance interface{}, fields []str
 	return i.DB.Select(fields).Create(instance).Error
 }
 
+// UpdateInstanceOnlyFields updates an existing instance of the model in the database, identified by the primary key value,
+// updating only the specified fields.
+// It returns an error if the operation fails.
 func (i *Integrator) UpdateInstanceOnlyFields(instance interface{}, fields []string, primaryKey interface{}) error {
 	modelType := reflect.TypeOf(instance).Elem()
 	modelValue := reflect.ValueOf(instance).Elem()
