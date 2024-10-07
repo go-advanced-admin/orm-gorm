@@ -1,23 +1,56 @@
-# Go Advanced Admin ORM GORM
+# Go Advanced Admin - GORM Integration
 
-A Highly Customizable Advanced Admin Panel for Go (Still in development a lot) GORM Integration
+[GORM](https://gorm.io/) integration for the Go Advanced Admin Panel.
 
-[![go report card](https://goreportcard.com/badge/github.com/go-advanced-admin/orm-gorm "go report card")](https://goreportcard.com/report/github.com/go-advanced-admin/orm-gorm)
+[![Go Report Card](https://goreportcard.com/badge/github.com/go-advanced-admin/orm-gorm)](https://goreportcard.com/report/github.com/go-advanced-admin/orm-gorm)
 [![Go](https://github.com/go-advanced-admin/orm-gorm/actions/workflows/tests.yml/badge.svg)](https://github.com/go-advanced-admin/orm-gorm/actions/workflows/tests.yml)
-[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-blue?logo=go&logoColor=white)](https://pkg.go.dev/github.com/go-advanced-admin/orm-gorm?tab=doc)
+
+This package provides GORM integration for the Go Advanced Admin Panel, allowing you to use GORM as your ORM backend.
 
 ## Installation
 
 Add the module to your project by running:
 
 ```sh
-go get github.com/go-advanced-admin/orm-gorm
+go get github.com/go-advanced-admin/gorm-integration
 ```
 
-## Contributing
-Contributions are always welcome! If you're interested in contributing to the project, please take a look at our [Contributing Guidelines](CONTRIBUTING.md) file for guidelines on how to get started. We appreciate your help in improving the library!
+## Documentation
 
-Special Thank you to the following current maintainers:
-- [Yidi Sprei](https://github.com/YidiDev)
-- [{{ Insert preferred name }}](https://github.com/coal-rock)
+For detailed documentation on how to use the GORM integration, please visit the [official documentation website](https://goadmin.dev/gprm.html).
+
+## Quick Start
+
+```go
+import (
+    "github.com/go-advanced-admin/admin"
+    "github.com/go-advanced-admin/gorm-integration"
+    "gorm.io/driver/sqlite"
+    "gorm.io/gorm"
+)
+
+func main() {
+    // Initialize GORM
+    db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+    if err != nil {
+        panic("failed to connect database")
+    }
+
+    // Initialize the ORM integrator
+    ormIntegrator := admingorm.NewIntegrator(db)
+
+    // Use ormIntegrator when initializing the admin panel
+}
+```
+
+For more detailed examples and configuration options, please refer to the [GORM Integration Guide](https://goadmin.dev/gorm.html).
+
+## Contributing
+
+Contributions are always welcome! Please refer to the [Contributing Guidelines](https://github.com/go-advanced-admin/admin/blob/main/CONTRIBUTING.md) in the main repository.
+
+## License
+
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
